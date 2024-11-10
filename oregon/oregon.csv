@@ -1,0 +1,13 @@
+num_trials=100,seconds ,success_rate,,num_trials=1000,seconds,success_rate,,num_trials=5000,seconds,success_rate
+test_1,0.6s,7%,,test_1,2.9s,3.30%,,test_1,18.6s,3.96%
+test_2,0.6s,5%,,test_2,3.9s,4.30%,,test_2,19.3s,4.02%
+test_3,0.2s,3%,,test_3,4.8s,5.30%,,test_3,18.4s,3.94%
+test_4,0.3s,4%,,test_4,4.1s,4.50%,,test_4,20.1s,4.28%
+test_5,0.2s,3%,,test_5,4.0s,4.40%,,test_5,19.1s,4.04%
+test_6,0.4s,5%,,test_6,4.2s,4.60%,,test_6,19.1s,4.06%
+test_7,0.3s,4%,,test_7,3.6s,3.90%,,test_7,20.5s,4.36%
+test_8,0.0s,0%,,test_8,3.6s,4.10%,,test_8,20.7s,4.32%
+test_9,0.2s ,3%,,test_9,3.3s,3.50%,,test_9,17.1s,3.62%
+test_10,0.4s,5%,,test_10,4.1s,4.50%,,test_10,18.1s,3.82%
+,,,,,,,,,,
+,,,,,,,,,Total Mean,4.04%
