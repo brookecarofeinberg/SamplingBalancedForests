@@ -1,3 +1,11 @@
+#The following code is from my research working with Dr. Sarah Cannon, investigating the splitability of random 
+# spanning trees on real-world political districting plans. First, I implement the class ‘WilsonsAlgorithm’ to 
+# generate uniform random spanning trees over real-world dual graphs. Then, I implement ‘GraphPartitioner’ to split 
+# the dual graph for k partitions, leveraging the Breadth-First Search graph traversal algorithm. Then I visualize 
+# the spanning tree on the dual graph and implement the function ‘run_partition_simulations’ to analyze the 
+# splitability rate based on k successes. Currently, I am working on implementing rustworkx or forgoing graph 
+# packages all together and manually implementing an adjacency list to improve scalability and efficiency. 
+
 import networkx as nx
 import json
 from networkx.readwrite import json_graph
