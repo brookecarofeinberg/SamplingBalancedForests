@@ -1,13 +1,20 @@
+import networkx as nx
+import json
+from networkx.readwrite import json_graph
+import matplotlib.pyplot as plt
+import numpy as np
+import random
+import networkx as nx
+from collections import deque
+
 class WilsonsAlgorithm:
     def __init__(self, graph):
         self.graph = graph  #store networkX graph 
         self.adj_list = {v: list(graph.neighbors(v)) for v in graph.nodes() if list(graph.neighbors(v))}  #for each graph node return the neighbors and store it as a dictionary where node is the key and each value corresponds to a list of its neighbors 
         self.InTree = {node: False for node in self.adj_list}  #initalizes dictionary to keep track of whether nodes have been included in the spanning tree -- FALSE as initial value menaing node has yet to be included in the tree 
         self.Next = {node: None for node in self.adj_list}  #initalizes dictionary to track path each node takes in a random walk 
-    
     def random_edge(self, v): #randomly selects an edge for a given node v 
         return random.choice(self.adj_list[v]) #retrieves the list of neighbors for node v in the adjacency list and randomly picks one -- simulating step ina  random walk 
-    
     def RandomTreeWithRoot(self, r): #generate random spanning tree with r as the root node 
         self.InTree = {node: False for node in self.adj_list} #initalize all nodes as not in the spanning tree 
         self.InTree[r] = True  #mark root node as in the tree 
@@ -20,7 +27,6 @@ class WilsonsAlgorithm:
                 node = self.Next[node]  #update next node and the new node so the loop continues till we reach a node already in the spanning tree 
             for vertex in path:  #loop has broken bc we've reached a node already part of the spanning tree 
                 self.InTree[vertex] = True  #adds each vertex to the spanning tree from the root outward 
-
     def sample(self, seed=None):
         if seed is not None: #can include seed later on for reproducible results 
             random.seed(seed)
@@ -32,7 +38,6 @@ class WilsonsAlgorithm:
             if self.Next[node] != -1 and self.Next[node] is not None: #find nodes connected to another node in the tree 
                 spanning_tree.append((node, self.Next[node])) #addes connection or edge as a tuple of two nodes to the spanning tree list 
         return spanning_tree, root #returns all the edges in the form of (node1, node2) and the root node 
-
     def draw_tree(self, spanning_tree, root, node_locations): #plot the spanning tree on the graph
         plt.figure(figsize=(8, 8))
         nx.draw(self.graph, pos=node_locations, node_size=10, edge_color='lightgray') #draw original graph 
@@ -43,8 +48,7 @@ class WilsonsAlgorithm:
 class GraphPartitioner:
     def __init__(self, graph, k):
         self.graph = graph
-        self.k = k
-
+        self.k = k  #choose k for confidence interval based on the Gamma Bernoulli approximation scheme 
     def create_weighted_partitions_and_draw_spanning_tree(self):
         while True:
             wilson = WilsonsAlgorithm(self.graph) #generate random spannign tree using wilson's algorithm 
@@ -84,21 +88,21 @@ class GraphPartitioner:
             if all(partition_sizes[i] == target_sizes[i] for i in range(self.k)): # check if all partitions are the right size
                 return True
 
-#plot of spannig tree 
+#plot of spannig tree for visualization 
 node_locations = {v: (float(cnty.nodes()[v]["INTPTLON20"]) - 360 if float(cnty.nodes()[v]["INTPTLON20"]) > 0 else float(cnty.nodes()[v]["INTPTLON20"]),
         float(cnty.nodes()[v]["INTPTLAT20"]))for v in cnty.nodes()}
 wilson = WilsonsAlgorithm(cnty)
 spanning_tree, root = wilson.sample()
 wilson.draw_tree(spanning_tree, root, node_locations)
 
-#Splitability Analysis 
-def run_partition_simulations(graph, k, num_trials=1000):
+def run_partition_simulations(graph, p, k): #Splitability analysis based on gamma bernoulli approx scheme 
     successful_splits = 0
-    for i in range(num_trials):
-        partitioner = GraphPartitioner(graph, k)
+    trials = 0
+    while successful_splits < k:
+        trials += 1
+        partitioner = GraphPartitioner(graph, p)
         if partitioner.create_weighted_partitions_and_draw_spanning_tree():
             successful_splits += 1
-    success_rate = (successful_splits / num_trials) * 100
-    print(f"Out of {num_trials} trials, the graph was splittable {successful_splits} times.")
-    print(f"Success Rate: {success_rate:.2f}%")
-    return success_rate
+    success_rate= (k/trials)*100
+    print(f"It took {trials} trials to achieve {k} successful splits for {p} partitions.")
+    print(f"average success rate is {success_rate}")
